@@ -73,8 +73,14 @@ export const GameCanvas = ({ onWin }: { onWin: () => void }) => {
         }
 
         function handleInput(e?: KeyboardEvent) {
-            if (keys.current["ArrowLeft"]) player.moveLeft();
-            if (keys.current["ArrowRight"]) player.moveRight();
+            if (keys.current["ArrowLeft"]) {
+                player.moveLeft();
+            } else if (keys.current["ArrowRight"]) {
+                player.moveRight();
+            } else {
+                player.resetTilt();
+            }
+
             if (keys.current[" "]) {
                 if (e) e.preventDefault(); // Prevent spacebar from scrolling
                 if (!bullets.isPlayerBulletActive()) {
