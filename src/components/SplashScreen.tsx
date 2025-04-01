@@ -1,4 +1,4 @@
-import imgUrl from "../Public/images/Space Intruder Alien.png";
+import imgUrl from "../public/images/space_intruder_alien.png";
 
 export const SplashScreen = ({ onStart }: { onStart: () => void }) => {
     return (
