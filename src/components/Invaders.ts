@@ -1,7 +1,18 @@
-import imgUrl from "../public/images/intruder.png";
+import imgUrl from "../public/images/intruder2.png";
 
 export class Invaders {
-    public invaders: { x: number; y: number; width: number; height: number }[];
+    public invaders: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        flip: boolean;
+        jiggleX: number;
+        jiggleY: number;
+        animationTimer: number;
+        hue: number;
+        saturation: number;
+    }[];
     private ctx: CanvasRenderingContext2D;
     private direction = 1;
     private baseSpeed = 0.5;
@@ -44,6 +55,12 @@ export class Invaders {
                     y: 100 + row * 80,
                     width: 80,
                     height: 40,
+                    flip: Math.random() > 0.5,
+                    jiggleX: 0,
+                    jiggleY: 0,
+                    animationTimer: Math.random() * 100,
+                    hue: Math.random() * 360,
+                    saturation: 0.5 + Math.random() * 0.5,
                 });
             }
         }
@@ -52,13 +69,49 @@ export class Invaders {
     draw() {
         if (!this.imageLoaded) return;
         this.invaders.forEach((invader) => {
+            this.ctx.save();
+
+            // Move to invader's position
+            this.ctx.translate(invader.x, invader.y);
+
+            // Apply jiggle offset
+            this.ctx.translate(invader.jiggleX, invader.jiggleY);
+
+            // Apply flip transformation
+            if (invader.flip) {
+                this.ctx.translate(invader.width, 0);
+                this.ctx.scale(-1, 1);
+            }
+
+            // Apply color transformation
+            this.ctx.filter = `hue-rotate(${invader.hue}deg) saturate(${invader.saturation})`;
+
             this.ctx.drawImage(
                 this.invaderImage,
-                invader.x,
-                invader.y,
+                0,
+                0,
                 invader.width,
                 invader.height
             );
+
+            // Reset filter
+            this.ctx.filter = "none";
+
+            this.ctx.restore();
+        });
+    }
+
+    private updateAnimation() {
+        this.invaders.forEach((invader) => {
+            // Randomly flip direction
+            if (Math.random() < 0.01) {
+                invader.flip = !invader.flip;
+            }
+
+            // Update jiggle animation
+            invader.animationTimer += 1;
+            invader.jiggleX = Math.sin(invader.animationTimer * 0.1) * 2;
+            invader.jiggleY = Math.cos(invader.animationTimer * 0.15) * 2;
         });
     }
 
@@ -80,6 +133,8 @@ export class Invaders {
                 invader.y += this.dropDistance;
             });
         }
+
+        this.updateAnimation();
     }
 
     remove(index: number) {
