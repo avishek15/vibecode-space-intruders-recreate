@@ -37,6 +37,6 @@ jobs:
               run: |
                   lftp -u $HOSTINGER_USER,$HOSTINGER_PASSWORD -p $HOSTINGER_PORT $HOSTINGER_HOST -e "
                     set ssl:verify-certificate no;
-                    mirror -R dist/ $HOSTINGER_REMOTE_DIR;
+                    mirror -R dist/ ./;
                     bye
                   "
